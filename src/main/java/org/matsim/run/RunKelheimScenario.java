@@ -169,6 +169,8 @@ public class RunKelheimScenario extends MATSimApplication {
 		config.plans().setInputFile(sample.adjustName(config.plans().getInputFile()));
 		config.controller().setRunId(sample.adjustName(config.controller().getRunId()));
 
+                config.controller().setLastIteration(50);
+
 		config.qsim().setFlowCapFactor(sample.getSize() / 100.0);
 		config.qsim().setStorageCapFactor(sample.getSize() / 100.0);
 
@@ -283,6 +285,7 @@ public class RunKelheimScenario extends MATSimApplication {
 				person.getAttributes().putAttribute("bicycleLove", number);
 			}
 		}
+                addHighwayToTheNetwork(scenario.getNetwork());
 
 	}
 
@@ -382,4 +385,31 @@ public class RunKelheimScenario extends MATSimApplication {
 
 		}
 	}
+
+private void addHighwayToTheNetwork(Network network) {
+		Node fromNode = network.getNodes().get(Id.createNodeId("3718431254"));
+		Node toNode = network.getNodes().get(Id.createNodeId("60587666"));
+
+		Id<Link> linkIdhw1 = Id.createLinkId("hw1");
+		double lengthOfhw1 = NetworkUtils.getEuclideanDistance(fromNode.getCoord(),toNode.getCoord());
+		double freeSpeedOfhw1 = 120/3.6;
+		double capacity = 2000;
+		double numberOfLanesOfhw1 = 1.0;
+
+		Link hw1 = network.getFactory().createLink(linkIdhw1, fromNode, toNode);
+		hw1.setLength(lengthOfhw1);
+		hw1.setFreespeed(120/3.6); // 你自己定义合理速度，比如 15 米/秒 ≈ 54 km/h
+		hw1.setCapacity(capacity);
+		hw1.setNumberOfLanes(numberOfLanesOfhw1);
+		network.addLink(hw1);
+
+
+		Link hw2 = network.getFactory().createLink(Id.createLinkId("hw2"), fromNode, toNode);
+		hw2.setLength(lengthOfhw1);
+		hw2.setFreespeed(120/3.6);
+		hw2.setCapacity(capacity);
+		hw2.setNumberOfLanes(numberOfLanesOfhw1);
+		network.addLink(hw2);
+	}
+
 }
